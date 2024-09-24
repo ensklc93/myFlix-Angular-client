@@ -26,20 +26,21 @@ export class FetchApiDataService  {
 
   // User Registration
   // Making the API call for the user registration endpoint
-  public userRegistration(): Observable<any> {
+  public userRegistration(userData: any): Observable<any> {
     const token = this.getToken(); 
-    return this.http.post(`${apiUrl}users`, {
+    return this.http.post(`${apiUrl}users`, userData, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
       })
     }).pipe(
+      map(this.extractResponseData),
       catchError(this.handleError)
     );
   }
   // User Login
-  public userLogin(): Observable<any> {
+  public userLogin(userData: any): Observable<any> {
     const token = this.getToken();
-    return this.http.post(`${apiUrl}login`, {
+    return this.http.post(`${apiUrl}login`, userData, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
       })
