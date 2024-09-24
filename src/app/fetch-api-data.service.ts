@@ -115,19 +115,6 @@ export class FetchApiDataService  {
     );
   }
 
-  // Get Favorite Movies for a User
-  public getFavoriteMovies(username: string): Observable<any> {
-    const token = this.getToken(); 
-    return this.http.get(`${apiUrl}users/${encodeURIComponent(username)}/movies`, {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + token,
-      })
-    }).pipe(
-      map(this.extractResponseData),
-      catchError(this.handleError)
-    );
-  }
-
   // Add a Movie to Favorite Movies
   public addMovieToFavorites(username: string, movieId: string): Observable<any> {
     const token = this.getToken(); 
