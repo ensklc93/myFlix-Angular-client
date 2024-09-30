@@ -1,0 +1,39 @@
+.favorite-movies-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+}
+
+.small-card {
+  width: 20em;
+}
+
+.small-card mat-card-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.small-card mat-card-actions {
+  justify-content: space-between;
+}
+
+.profile-info {
+  margin: 40px 0;
+}
+
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  margin-top: -16px;
+  z-index: 10;
+  background-color: #faf9fd;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
