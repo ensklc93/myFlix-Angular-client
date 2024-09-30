@@ -1,0 +1,36 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 1em;
+    padding-block: 16px;
+    padding-inline: 1px;
+}
+
+.cardMovie {
+    max-width: 400px;
+}
+
+.imageMovie {
+    height: 100%;
+}
+
+.imageMovie:hover {
+    cursor: pointer;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    margin-top: -16px;
+    z-index: 10;
+  background-color: #faf9fd;
+
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
