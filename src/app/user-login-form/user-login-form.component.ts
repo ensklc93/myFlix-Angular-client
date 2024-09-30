@@ -34,6 +34,7 @@ export class UserLoginFormComponent implements OnInit {
   userLogin(): void {
     this.fetchApiData.userLogin(this.userData).subscribe({
       next: (response) => {
+        this.fetchApiData.saveUserDataToLocalStorage(response);
         this.dialogRef.close(); // Close modal on success
         this.snackBar.open('User successfully logged in', 'OK', {
           duration: 2000,
