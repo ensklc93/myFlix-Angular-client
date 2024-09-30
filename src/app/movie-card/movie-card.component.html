@@ -1,6 +1,31 @@
-<mat-card *ngFor="let movie of movies; let i=index;">
-    <mat-dialog-content>
-        <mat-card-title>{{movie.Title}}</mat-card-title>
-        <mat-card-subtitle><img src={{movie.ImagePath}}/></mat-card-subtitle>
-    </mat-dialog-content>
-</mat-card>
+<div class="container">
+  <mat-toolbar color="primary" class="navbar">
+    <span>My Video App</span>
+    <span class="spacer"></span>
+    <button mat-button (click)="scrollToTop()">Home</button>
+    <button mat-button [routerLink]="['/profile']">Profile</button>
+    <button mat-button (click)="logout()">Logout</button>
+  </mat-toolbar>
+  <mat-card *ngFor="let movie of movies;" class="cardMovie">
+    <mat-card-header>
+      <mat-card-title>{{ movie.Title }}</mat-card-title>
+      <mat-card-subtitle>Directed by: {{ movie.Director.Name }}</mat-card-subtitle>
+      <mat-card-subtitle>Genre: {{ movie.Genre.Name }}</mat-card-subtitle>
+    </mat-card-header>
+    <img mat-card-image [src]="movie.ImagePath" alt="{{ movie.Title }}" class="imageMovie" (click)="openDescriptionInfoDialog(movie)"/>
+    <mat-card-actions>
+      <button mat-button color="primary" (click)="openGenreDialog(movie.Genre)">
+        Genre Info
+      </button>
+      <button mat-button color="primary" (click)="openDirectorDialog(movie.Director)">
+        Director Info
+      </button>
+      <button mat-button color="primary" (click)="openDescriptionInfoDialog(movie)">
+        Movie Description
+      </button>
+      <button mat-icon-button color="primary" (click)="toggleFavorite(movie._id, movie.Title)">
+        <mat-icon>{{ isFavorite(movie._id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
