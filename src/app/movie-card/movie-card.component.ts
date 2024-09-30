@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { FetchApiDataService } from '../fetch-api-data.service';
 import { DirectorInfoComponent } from '../director-info/director-info.component';
@@ -21,8 +22,9 @@ export class MovieCardComponent implements OnInit {
     private router: Router,
     public fetchApiData: FetchApiDataService,
     public snackBar: MatSnackBar,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   ngOnInit(): void {
     this.getMovies();
@@ -83,31 +85,35 @@ export class MovieCardComponent implements OnInit {
 
   // Add movie to favorites
   addToFavorites(movieId: string, movieTitle: string): void {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    this.fetchApiData.addMovieToFavorites(user.Username, movieId).subscribe((resp: any) => {
-      this.favoriteMovies.push(movieId); // Add movie to the favorite list
-      this.snackBar.open(`${movieTitle} has been added to your favorites!`, 'OK', {
-        duration: 2000,
+    if (isPlatformBrowser(this.platformId)) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      this.fetchApiData.addMovieToFavorites(user.Username, movieId).subscribe((resp: any) => {
+        this.favoriteMovies.push(movieId); // Add movie to the favorite list
+        this.snackBar.open(`${movieTitle} has been added to your favorites!`, 'OK', {
+          duration: 2000,
+        });
       });
-    });
+    }
   }
 
   removeFromFavorites(movieId: string, movieTitle: string): void {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    this.fetchApiData.removeMovieFromFavorites(user.Username, movieId).subscribe((resp: any) => {
-      this.favoriteMovies = this.favoriteMovies.filter(id => id !== movieId); // Remove from favorites
-      this.snackBar.open(`${movieTitle} has been removed from your favorites!`, 'OK', {
-        duration: 2000,
+    if (isPlatformBrowser(this.platformId)) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      this.fetchApiData.removeMovieFromFavorites(user.Username, movieId).subscribe((resp: any) => {
+        this.favoriteMovies = this.favoriteMovies.filter(id => id !== movieId); // Remove from favorites
+        this.snackBar.open(`${movieTitle} has been removed from your favorites!`, 'OK', {
+          duration: 2000,
+        });
       });
-    });
+    }
   }
-  
+
 
   // Scroll to the top of the page
   scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  
+
   // Logout the user and navigate to welcome page
   logout(): void {
     localStorage.clear(); // Clear user data from local storage

@@ -80,7 +80,7 @@ export class FetchApiDataService {
       catchError(this.handleError)
     );
   }
-  
+
   public getOneMovieById(movieId: string): Observable<any> {
     const token = this.getToken();
     return this.http.get(`${apiUrl}movies/${encodeURIComponent(movieId)}`, {
@@ -92,7 +92,7 @@ export class FetchApiDataService {
       catchError(this.handleError)
     );
   }
-  
+
 
   // Get Director Information
   public getDirector(directorName: string): Observable<any> {
@@ -195,7 +195,7 @@ export class FetchApiDataService {
   // Handle the error in HTTP requests
   private handleError(error: HttpErrorResponse): any {
     let errorMessage = '';
-    
+
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred
       errorMessage = `A network error occurred: ${error.error.message}`;
@@ -209,11 +209,11 @@ export class FetchApiDataService {
         errorMessage = `Error ${error.status}: ${error.message}`;
       }
     }
-  
+
     console.error(errorMessage);
-    
+
     // Return the detailed error message
     return throwError(() => new Error(errorMessage));
-  }  
+  }
 
 }

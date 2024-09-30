@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { FetchApiDataService } from '../fetch-api-data.service';
 import { DirectorInfoComponent } from '../director-info/director-info.component';
@@ -11,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
+
 })
 export class ProfileComponent implements OnInit {
   userData: any = {}; // Holds user information
@@ -20,11 +22,12 @@ export class ProfileComponent implements OnInit {
   updatedUserData: any = {}; // Holds updated user information
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
     private fetchApiData: FetchApiDataService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getUserData();
@@ -32,38 +35,40 @@ export class ProfileComponent implements OnInit {
 
   // Fetch user data from the API
   getUserData(): void {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      this.userData = JSON.parse(storedUser);
-      this.fetchApiData.getUser(this.userData.Username).subscribe(
-        (resp) => {
-          this.userData = resp;
-          const favoriteMovieIds: string[] = resp.FavoriteMovies;
+    if (isPlatformBrowser(this.platformId)) {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        this.userData = JSON.parse(storedUser);
+        this.fetchApiData.getUser(this.userData.Username).subscribe(
+          (resp) => {
+            this.userData = resp;
+            const favoriteMovieIds: string[] = resp.FavoriteMovies;
 
-          if (favoriteMovieIds.length > 0) {
-            this.fetchApiData.getAllMovies().subscribe(
-              (movies: any[]) => {
-                this.allMovies = movies;
-                this.favoriteMovies = this.allMovies.filter(movie => favoriteMovieIds.includes(movie._id));
-                
-                if (this.favoriteMovies.length !== favoriteMovieIds.length) {
-                  this.snackBar.open('Some favorite movies could not be loaded.', 'OK', { duration: 3000 });
+            if (favoriteMovieIds.length > 0) {
+              this.fetchApiData.getAllMovies().subscribe(
+                (movies: any[]) => {
+                  this.allMovies = movies;
+                  this.favoriteMovies = this.allMovies.filter(movie => favoriteMovieIds.includes(movie._id));
+
+                  if (this.favoriteMovies.length !== favoriteMovieIds.length) {
+                    this.snackBar.open('Some favorite movies could not be loaded.', 'OK', { duration: 3000 });
+                  }
+                },
+                (error) => {
+                  console.error('Error fetching all movies:', error);
+                  this.snackBar.open('Failed to load favorite movies.', 'OK', { duration: 3000 });
                 }
-              },
-              (error) => {
-                console.error('Error fetching all movies:', error);
-                this.snackBar.open('Failed to load favorite movies.', 'OK', { duration: 3000 });
-              }
-            );
-          } else {
-            this.favoriteMovies = [];
+              );
+            } else {
+              this.favoriteMovies = [];
+            }
+          },
+          (error) => {
+            console.error('Error fetching user data:', error);
+            this.snackBar.open('Failed to load user data.', 'OK', { duration: 3000 });
           }
-        },
-        (error) => {
-          console.error('Error fetching user data:', error);
-          this.snackBar.open('Failed to load user data.', 'OK', { duration: 3000 });
-        }
-      );
+        );
+      }
     }
   }
 
@@ -168,7 +173,7 @@ export class ProfileComponent implements OnInit {
   saveUserDataToLocalStorage(userData: any): void {
     localStorage.setItem('user', JSON.stringify(userData));
     if (userData.token) {
-    localStorage.setItem('token', userData.token);
+      localStorage.setItem('token', userData.token);
     }
   }
 
