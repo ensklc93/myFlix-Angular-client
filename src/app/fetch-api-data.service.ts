@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -14,7 +15,10 @@ const apiUrl = 'https://my-movie-app-ab91e4bb4611.herokuapp.com/';
 export class FetchApiDataService {
   // Inject HttpClient module to constructor params
   // Provide HttpClient to the entire class, making it available via this.http
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   // Get token from local storage
   private getToken(): string {
@@ -196,7 +200,7 @@ export class FetchApiDataService {
   private handleError(error: HttpErrorResponse): any {
     let errorMessage = '';
 
-    if (error.error instanceof ErrorEvent) {
+    if (isPlatformBrowser(this.platformId) && error.error instanceof ErrorEvent) {
       // A client-side or network error occurred
       errorMessage = `A network error occurred: ${error.error.message}`;
     } else {

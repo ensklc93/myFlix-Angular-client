@@ -29,7 +29,9 @@ export class MovieCardComponent implements OnInit {
   ngOnInit(): void {
     this.getMovies();
     this.getFavoriteMovies();
+    if (isPlatformBrowser(this.platformId)) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   getMovies(): void {
@@ -40,10 +42,12 @@ export class MovieCardComponent implements OnInit {
   }
 
   getFavoriteMovies(): void {
+    if (isPlatformBrowser(this.platformId)) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.fetchApiData.getUser(user.Username).subscribe((resp: any) => {
       this.favoriteMovies = resp.FavoriteMovies;
     });
+  }
   }
 
   // Check if a movie is in the user's favorites

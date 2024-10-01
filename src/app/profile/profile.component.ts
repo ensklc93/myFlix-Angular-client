@@ -171,14 +171,19 @@ export class ProfileComponent implements OnInit {
 
   // Save updated user data to localStorage
   saveUserDataToLocalStorage(userData: any): void {
+    if (isPlatformBrowser(this.platformId)) {
     localStorage.setItem('user', JSON.stringify(userData));
     if (userData.token) {
       localStorage.setItem('token', userData.token);
     }
   }
+  }
 
   // Delete user account
   deleteAccount(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     const username = this.userData.Username;
 
     if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
@@ -215,11 +220,15 @@ export class ProfileComponent implements OnInit {
   }
 
   scrollToTop(): void {
+    if (isPlatformBrowser(this.platformId)) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   logout(): void {
+    if (isPlatformBrowser(this.platformId)) {
     localStorage.clear(); // Clear user data from local storage
     this.router.navigate(['/welcome']); // Navigate back to the welcome page
+  }
   }
 }
