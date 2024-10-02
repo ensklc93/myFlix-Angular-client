@@ -1,0 +1,7 @@
+{
+    "entryPoints": ["src/app/**/*.ts"],
+    "out": "docs",
+    "exclude": ["**/*.spec.ts"],
+    "theme": "default"
+}
+  

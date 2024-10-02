@@ -1,3 +1,9 @@
+/**
+ * @file profile.component.ts
+ * @description This component handles displaying and managing user profile information, 
+ *              including updating user details, viewing favorite movies, and deleting the user account.
+ */
+
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,6 +14,11 @@ import { GenreInfoComponent } from '../genre-info/genre-info.component';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+/**
+ * @class ProfileComponent
+ * @description Component for displaying and managing user profile, including favorites and user data.
+ */
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -15,11 +26,29 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 })
 export class ProfileComponent implements OnInit {
-  userData: any = {}; // Holds user information
-  favoriteMovies: any[] = []; // Holds favorite movies
-  allMovies: any[] = []; // To store all movies
-  editMode: boolean = false; // Toggle edit form visibility
-  updatedUserData: any = {}; // Holds updated user information
+  /** Object holding user information */
+  userData: any = {};
+
+  /** Array holding the user's favorite movies */
+  favoriteMovies: any[] = [];
+
+  /** Array to store all movies, used to find favorites */
+  allMovies: any[] = [];
+
+  /** Boolean to toggle the edit form visibility */
+  editMode: boolean = false;
+
+  /** Object holding updated user information */
+  updatedUserData: any = {};
+
+  /**
+   * @constructor
+   * @param {Object} platformId - The platform (browser/server) identifier for platform-specific operations
+   * @param {Router} router - Angular router for navigation
+   * @param {FetchApiDataService} fetchApiData - Service for making API calls
+   * @param {MatDialog} dialog - Material dialog for displaying movie info
+   * @param {MatSnackBar} snackBar - Material snackbar for notifications
+   */
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -29,11 +58,21 @@ export class ProfileComponent implements OnInit {
     public snackBar: MatSnackBar
   ) { }
 
+  /**
+   * @method ngOnInit
+   * @description Lifecycle hook that runs when the component is initialized. 
+   *              Fetches user data and favorite movies.
+   */
+
   ngOnInit(): void {
     this.getUserData();
   }
 
-  // Fetch user data from the API
+  /**
+   * @method getUserData
+   * @description Fetches user data from the API and loads their favorite movies.
+   */
+
   getUserData(): void {
     if (isPlatformBrowser(this.platformId)) {
       const storedUser = localStorage.getItem('user');
@@ -72,12 +111,24 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  /**
+   * @method openDescriptionInfoDialog
+   * @description Opens a dialog with the movie's description information.
+   * @param {any} movie - The movie data to display.
+   */
+
   openDescriptionInfoDialog(movie: any): void {
     this.dialog.open(DescriptionInfoComponent, {
       data: movie,
       width: '500px'
     });
   }
+
+  /**
+   * @method openDirectorDialog
+   * @description Opens a dialog with the director's information.
+   * @param {any} director - The director data to display.
+   */
 
   openDirectorDialog(director: any): void {
     this.dialog.open(DirectorInfoComponent, {
@@ -86,6 +137,12 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  /**
+   * @method openGenreDialog
+   * @description Opens a dialog with the genre's information.
+   * @param {any} genre - The genre data to display.
+   */
+
   openGenreDialog(genre: any): void {
     this.dialog.open(GenreInfoComponent, {
       data: genre,
@@ -93,7 +150,11 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  // Toggle edit mode to show/hide edit form
+  /**
+   * @method toggleEditMode
+   * @description Toggles the edit mode to show or hide the edit form for the user's profile.
+   */
+
   toggleEditMode(): void {
     this.editMode = !this.editMode;
     if (this.editMode) {
@@ -106,17 +167,26 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  // Format date to YYYY-MM-DD
+  /**
+   * @method formatDate
+   * @description Formats a date string to 'YYYY-MM-DD' format.
+   * @param {string} dateString - The original date string.
+   * @returns {string} - The formatted date string.
+   */
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    // Months are zero-based in JavaScript
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
   }
 
-  // Update user information
+  /**
+   * @method updateUser
+   * @description Updates the user's profile information.
+   */
+
   updateUser(): void {
     const username = this.userData.Username;
     const updatedData: any = {};
@@ -169,7 +239,12 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  // Save updated user data to localStorage
+  /**
+   * @method saveUserDataToLocalStorage
+   * @description Saves the updated user data to localStorage.
+   * @param {any} userData - The updated user data.
+   */
+
   saveUserDataToLocalStorage(userData: any): void {
     if (isPlatformBrowser(this.platformId)) {
     localStorage.setItem('user', JSON.stringify(userData));
@@ -179,7 +254,11 @@ export class ProfileComponent implements OnInit {
   }
   }
 
-  // Delete user account
+  /**
+   * @method deleteAccount
+   * @description Deletes the user's account after confirmation.
+   */
+
   deleteAccount(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
@@ -201,8 +280,12 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+/**
+   * @method removeFromFavorites
+   * @description Removes a movie from the user's favorite list.
+   * @param {string} movieId - The ID of the movie to remove.
+   */
 
-  // Remove movie from favorites
   removeFromFavorites(movieId: string): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.fetchApiData.removeMovieFromFavorites(user.Username, movieId).subscribe(
@@ -219,12 +302,22 @@ export class ProfileComponent implements OnInit {
     );
   }
 
+  /**
+   * @method scrollToTop
+   * @description Smooth scrolls the window back to the top.
+   */
+
   scrollToTop(): void {
     if (isPlatformBrowser(this.platformId)) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
+  /**
+   * @method logout
+   * @description Logs out the user by clearing localStorage and navigating to the welcome page.
+   */
+  
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
     localStorage.clear(); // Clear user data from local storage
